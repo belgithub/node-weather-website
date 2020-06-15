@@ -8,18 +8,23 @@ const forecast = (address = 'Kiev', callback) => {
         url,
         json: true
     }, (err, resp) => {
-        // if (err) {
-        //     console.log('Err => ', err)
-        //     return
-        // }
-        console.log(resp.body)
+        if(err) {
+            this.callback(err, {})
+            return
+        }
         if (resp.body.error && resp.body.error.info) {
             callback(resp.body.error.info, {})
+            return
+        }
+        if(!resp.body.current) {
+            callback('Something went wrong, try again later...', {})
+            return
         }
         callback(err, {
             description: resp.body.current.weather_descriptions,
             temperature: resp.body.current.temperature,
-            precip: resp.body.current.precip
+            precip: resp.body.current.precip,
+            query: resp.body.request.query
         })
 
     })
